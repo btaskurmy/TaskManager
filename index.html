@@ -1,0 +1,43 @@
+
+<html>
+    <head>
+        <title>タスク管理サイト</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        
+    </head>
+
+    <body>
+        <h1>タスク管理サイト</h1>
+        <input type="email" class="form-control" id="email" placeholder="メールアドレス">
+        <br/>
+        <br/>
+
+
+        <input type="password" class="form-control" id="password" placeholder="パスワード">
+        <br/>
+        <br/>
+
+        <button type="button">ログイン</button>
+        <button type="button">新規登録</button>
+
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        
+        <input type="text" name="text" id="newtask">
+        <button onclick="addTask()">+ Add</button>
+
+        <div id="tasks"></div>
+
+        <div id="chart">
+            <canvas id="myChart" width="10" height="10"></canvas>
+        </div>
+        
+    </body>
+
+    
+    <script src = "main.js"></script>
+    <script src = "chart.js"></script>
+</html>
