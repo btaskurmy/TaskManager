@@ -5,14 +5,14 @@ let myChart;
 let t = [0,0,0,0,0];
 let taskindex = -1;
 
-let contents = [];
+let contents = ["残り時間"];
 let colors = [];
 
 let ctx = document.getElementById('myChart').getContext('2d');
 addPiechart(ctx);
 
 let taskcount = -1;
-
+let tasks = document.getElementById("tasks");
 
 
 let newtask = document.getElementById("newtask");
@@ -20,10 +20,6 @@ let newtask = document.getElementById("newtask");
 
 
 newtask.setAttribute("value", "New Task");
-let tasks = document.getElementById("tasks");
-
-
-
 
 function addPiechart(ctx){
     myChart = new Chart(ctx, {
@@ -31,7 +27,7 @@ function addPiechart(ctx){
     data: {
         labels: [contents],
         datasets: {
-            data: [0],
+            data: [60],
             backgroundColor: [
                 "rgba(128, 128, 128, 0.2)"
             ],
@@ -54,7 +50,6 @@ function addPiechart(ctx){
     });
 
 }
-
 
 
 
@@ -161,6 +156,7 @@ function addTask(){
         tasks.appendChild(task);
     }
 }
+
 function deleteTask(h2,deletebutton,timer){
 
     let confirm = window.confirm("Are you sure you want to delete this task?");
