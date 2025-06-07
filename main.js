@@ -1,44 +1,98 @@
-import colorMap from "./colorMap.js";
-let currentcolor = 0;
-var Tasks = {};
-let percentage = 0;
+import {colormap} from "./colorMap.js";
 
-// setInterval(function(){
-//     datasets[0].data = [Task[0].time,60];
-//     myChart.update();
-// },1000)
-//タスクを配列化し、Task[0].timeみたいに秒数を取り出す。
-
-let newtask = document.getElementById("newtask");
-
-newtask.value = "New Task";
-newtask.setAttribute("value", "akjfgi");
-let tasks = document.getElementById("tasks");
 let myChart;
+
+let t = [0,0,0,0,0];
+let taskindex = -1;
+
+let contents = [];
+let colors = [];
+
 let ctx = document.getElementById('myChart').getContext('2d');
 addPiechart(ctx);
 
+let taskcount = -1;
+
+
+
+let newtask = document.getElementById("newtask");
+
+
+
+newtask.setAttribute("value", "New Task");
+let tasks = document.getElementById("tasks");
+
+
+
+
+function addPiechart(ctx){
+    myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [contents],
+        datasets: {
+            data: [0],
+            backgroundColor: [
+                "rgba(128, 128, 128, 0.2)"
+            ],
+            borderColor: [
+                "rgba(128, 128, 128, 1)"
+            ],
+            borderWidth: 1
+        }
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        animation: {
+            animateScale: true
+        },
+    }
+    });
+
+}
+
+
+
+
+setInterval(function(){
+    myChart.data.datasets[0].data = [60];
+    myChart.update();
+},1000)
 
 
 
 function addTask(){
     
-    
-    Tasks[colorMap(currentcolor)]
-
-
-
-
     let textvalue = newtask.value;
     let countdownID = 0;
+    taskcount ++;
 
     if(textvalue){
+
         let task = document.createElement("div");
         task.className = "task";
 
+
+
+        
+        contents.push = newtask.value;
+        colors.push = colormap[taskindex];
+        myChart.data.labels.push(contents[taskindex]); // ラベルを追加
+        myChart.data.datasets[0].backgroundColor.push(colors[taskindex]); // 色を追加
+        myChart.update();
+
+
+
         let h2 = document.createElement("h2");
-        h2.textContent = newtask.value;
+
+        
+        
         h2.setAttribute("style","display:inline;margin-right:8px;");
+
 
         let timer = document.createElement("div");
         timer.className = "timer";
@@ -74,15 +128,15 @@ function addTask(){
 
         let startbutton = document.createElement("button");
         startbutton.innerHTML = "Start";
-        startbutton.onclick= ()=>{countdownID = countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate,number);}
-        startbutton.onclick= ()=>{number + 1;}
+        startbutton.onclick= ()=>{countdownID = countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate,taskindex);}
+
         let stopbutton = document.createElement("button");
         stopbutton.innerHTML = "Stop";
         stopbutton.onclick= ()=>stopcount(countdownID);
 
         let rate = document.createElement("h2");
         
-        
+        taskindex++;
 
         timer.appendChild(text);
         timer.appendChild(hidetext);
@@ -95,43 +149,45 @@ function addTask(){
         let deletebutton = document.createElement("button");
         deletebutton.innerHTML = "Delete";
         deletebutton.onclick= ()=>deleteTask(h2,deletebutton,timer);
+        taskcount --;
 
         
 
         task.appendChild(h2);
         task.appendChild(deletebutton);
         task.appendChild(timer);
-        task.id = "task";
+
 
         tasks.appendChild(task);
-        
     }
 }
 function deleteTask(h2,deletebutton,timer){
 
-    alert("Are you sure you want to delete this task?");
-    h2.remove();
-    deletebutton.remove();
-    timer.remove();
+    let confirm = window.confirm("Are you sure you want to delete this task?");
+    if(confirm){
+        h2.remove();
+        deletebutton.remove();
+        timer.remove();
+    }
 }
 
 
 
-function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate){
-    let time;
+function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate,taskindex){
+    
+    
     let second = 0;
     let minute = 0;
     let hour = 0;
-    let nowdate = new Date();
 
     if(countdownID != 0){
         stopcount(countdownID);
     }
     if(hidetext.value != "none"){
-        time = parseInt(hidetext.value);
+        t[taskindex] = parseInt(hidetext.value);
     }
     else{
-        time = 0;
+        t[taskindex] = 0;
     }
     if(hidesecond.value != "none"){
         second = parseInt(hidesecond.value);
@@ -154,17 +210,12 @@ function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownI
     }
 
 
-    setInterval(function(){
-        let datasets = myChart.data.datasets;
-        
-
-        datasets[0].data = [time[0],60];
-        myChart.update();
-    })
+    
     
 
     countdownID = setInterval(function(){
-        time++;
+        t[taskindex]++;
+
         second++;
         if(second>59){
             second = 0;
@@ -177,21 +228,12 @@ function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownI
         
         count.textContent =  `${( '00' + hour ).slice( -2 )}:${( '00' + minute ).slice( -2 )}:${( '00' + second ).slice( -2 )}` 
         
-        
-        
 
-        // percentage = second/86400;
-        // percentage = percentage * 10000;
-        // percentage = Math.round(percentage);
-        // percentage = percentage / 10000;
-        
-        // rate.textContent = percentage + "%";
-
-        hidetext.value = time;
+        hidetext.value = t[taskindex];
         hidesecond.value = second;
         hideminute.value = minute;
         hidehour.value = hour;
-        if(time >= parseInt(text.value)){
+        if(t[taskindex] >= parseInt(text.value)){
             count.style.color = "green";
             count.style.fontWeight = 900;
         }
@@ -201,41 +243,3 @@ function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownI
 function stopcount(countdownID){
     clearInterval(countdownID);
 }
-
-
-
-
-function addPiechart(ctx){
-    myChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['赤', '青', '黄'],
-        datasets: [{
-            data: [12, 19, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        animation: {
-            animateScale: true
-        },
-    }
-    });
-
-}
-
