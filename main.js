@@ -26,7 +26,7 @@ function addPiechart(ctx){
     type: 'pie',
     data: {
         labels: [contents],
-        datasets: {
+        datasets: [{
             data: [60],
             backgroundColor: [
                 "rgba(128, 128, 128, 0.2)"
@@ -35,7 +35,7 @@ function addPiechart(ctx){
                 "rgba(128, 128, 128, 1)"
             ],
             borderWidth: 1
-        }
+        }]
     },
     options: {
         scales: {
@@ -51,13 +51,10 @@ function addPiechart(ctx){
 
 }
 
-
-
 setInterval(function(){
     myChart.data.datasets[0].data = [60];
     myChart.update();
-},1000)
-
+},1000);
 
 
 function addTask(){
