@@ -23,6 +23,39 @@ let newtask = document.getElementById("newtask");
 
 newtask.setAttribute("value", "New Task");
 
+
+class Task{
+    constructor(name){
+        this.name = name;
+        this.hours = 0;
+        this.minutes = 0;
+        this.seconds = 0;
+        this.active = 0;
+        this.timer = "00:00:00";
+    }
+    Start(){
+        this.active = 1;
+    }
+    Stop(){
+        this.active = 0;
+    }
+    updateTimer(){
+        if(this.active == 0){
+            return;
+        }
+        this.seconds++;
+        if(seconds > 60){
+            minutes++;
+        }
+        if(minutes > 60){
+            hours++;
+        }
+        timer =  `${( '00' + hours ).slice( -2 )}:${( '00' + minutes ).slice( -2 )}:${( '00' + seconds ).slice( -2 )}`;
+    }
+}
+
+
+
 function addPiechart(ctx){
     myChart = new Chart(ctx, {
     type: 'pie',
