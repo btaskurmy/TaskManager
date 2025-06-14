@@ -24,7 +24,7 @@ function addPiechart(ctx){
     myChart = new Chart(ctx, {
     type: 'pie',
     data: {
-        labels: [contents],
+        labels: contents,
         datasets: [{
             data: [60],
             backgroundColor: [
@@ -59,99 +59,95 @@ setInterval(function(){
 function addTask(){
     
     let textvalue = newtask.value;
-    let countdownID = 0;
     taskcount ++;
 
-    if(textvalue){
+    if(!textvalue){return;}
 
-        let task = document.createElement("div");
-        task.className = "task";
+    let task = document.createElement("div");
+    task.className = "task";
 
 
-
-        
-        contents.push = newtask.value;
-        colors.push = colormap[taskindex];
-        myChart.data.labels.push(contents[taskindex]); // ラベルを追加
-        myChart.data.datasets[0].backgroundColor.push(colors[taskindex]); // 色を追加
-        myChart.update();
+    //タイトル作成
+    let h2 = document.createElement("h2");
+    h2.innerHTML = textvalue;
+    h2.setAttribute("style","display:inline;margin-right:8px;");
+    task.appendChild(h2);
 
 
 
-        let h2 = document.createElement("h2");
+    //削除ボタン
+    let deletebutton = document.createElement("button");
+    deletebutton.innerHTML = "Delete";
+    deletebutton.onclick= ()=>deleteTask(h2,deletebutton,timer);
+    task.appendChild(deletebutton);
 
-        
-        
-        h2.setAttribute("style","display:inline;margin-right:8px;");
-
-
-        let timer = document.createElement("div");
-        timer.className = "timer";
-        let text = document.createElement("input");
-        text.type = "text";
-        text.placeholder = "目標時間"
-        let hidetext = document.createElement("input");
-        hidetext.style.display = "none";
-        hidetext.value = "none";
+    //タイマー追加
+    let timer = createTimer();
+    task.appendChild(timer);
 
 
-        let hidesecond = document.createElement("input");
-        hidesecond.style.display = "none";
-        hidesecond.value = "none";
-
-        let hideminute = document.createElement("input");
-        hideminute.style.display = "none";
-        hideminute.value = "none";
-
-        let hidehour = document.createElement("input");
-        hidehour.style.display = "none";
-        hidehour.value = "none";
+    //グラフ更新
+    contents.push(newtask.value);
+    colors.push(colormap[taskindex]);
+    myChart.data.labels.push(contents[taskindex]); // ラベルを追加
+    myChart.data.datasets[0].backgroundColor.push(colors[taskindex]); // 色を追加
+    myChart.update();
 
 
-
-        
-
-
-
-        let count = document.createElement("p");
-        count.textContent = "00:00:00";
-        count.style.fontSize = 25;
-
-        let startbutton = document.createElement("button");
-        startbutton.innerHTML = "Start";
-        startbutton.onclick= ()=>{countdownID = countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate,taskindex);}
-
-        let stopbutton = document.createElement("button");
-        stopbutton.innerHTML = "Stop";
-        stopbutton.onclick= ()=>stopcount(countdownID);
-
-        let rate = document.createElement("h2");
-        
-        taskindex++;
-
-        timer.appendChild(text);
-        timer.appendChild(hidetext);
-        timer.appendChild(count);
-        timer.appendChild(startbutton);
-        timer.appendChild(stopbutton);
-        timer.appendChild(rate);
-
-
-        let deletebutton = document.createElement("button");
-        deletebutton.innerHTML = "Delete";
-        deletebutton.onclick= ()=>deleteTask(h2,deletebutton,timer);
-        taskcount --;
-
-        
-
-        task.appendChild(h2);
-        task.appendChild(deletebutton);
-        task.appendChild(timer);
-
-
-        tasks.appendChild(task);
-    }
+    tasks.appendChild(task);
+    taskindex++;
 }
+
+
+function createTimer(){
+    let countdownID = 0;
+    //タイマー作成
+    let timer = document.createElement("div");
+    timer.className = "timer";
+    let text = document.createElement("input");
+    text.type = "text";
+    text.placeholder = "目標時間"
+    timer.appendChild(text);
+
+
+    //現在の時間
+    let hidesecond = document.createElement("input");
+    hidesecond.style.display = "none";
+    hidesecond.value = "none";
+
+    let hideminute = document.createElement("input");
+    hideminute.style.display = "none";
+    hideminute.value = "none";
+
+    let hidehour = document.createElement("input");
+    hidehour.style.display = "none";
+    hidehour.value = "none";
+
+
+
+    //カウント表示用
+    let count = document.createElement("p");
+    count.textContent = "00:00:00";
+    count.style.fontSize = 25;
+    timer.appendChild(count);
+
+    //スタートボタン
+    let startbutton = document.createElement("button");
+    startbutton.innerHTML = "Start";
+    startbutton.onclick= ()=>{countdownID = countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskindex);}
+    timer.appendChild(startbutton);
+
+    //ストップボタン
+    let stopbutton = document.createElement("button");
+    stopbutton.innerHTML = "Stop";
+    stopbutton.onclick= ()=>stopcount(countdownID);
+    timer.appendChild(stopbutton);
+    
+
+    return timer;
+}
+
+
 
 function deleteTask(h2,deletebutton,timer){
 
@@ -160,12 +156,13 @@ function deleteTask(h2,deletebutton,timer){
         h2.remove();
         deletebutton.remove();
         timer.remove();
+        taskcount --;
     }
 }
 
 
 
-function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownID,rate,taskindex){
+function countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskindex){
     
     
     let second = 0;
@@ -174,12 +171,6 @@ function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownI
 
     if(countdownID != 0){
         stopcount(countdownID);
-    }
-    if(hidetext.value != "none"){
-        t[taskindex] = parseInt(hidetext.value);
-    }
-    else{
-        t[taskindex] = 0;
     }
     if(hidesecond.value != "none"){
         second = parseInt(hidesecond.value);
@@ -221,10 +212,10 @@ function countdown(text,hidetext,hidesecond,hideminute,hidehour,count,countdownI
         count.textContent =  `${( '00' + hour ).slice( -2 )}:${( '00' + minute ).slice( -2 )}:${( '00' + second ).slice( -2 )}` 
         
 
-        hidetext.value = t[taskindex];
         hidesecond.value = second;
         hideminute.value = minute;
         hidehour.value = hour;
+
         if(t[taskindex] >= parseInt(text.value)){
             count.style.color = "green";
             count.style.fontWeight = 900;
