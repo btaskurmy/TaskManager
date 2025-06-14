@@ -1,8 +1,11 @@
-
 let myChart;
 
-let t = [0,0,0,0,0];
+let t = [0,0,0,0,60];
+let isactivetimer = [0,0,0,0,0];
+
 let taskindex = -1;
+
+let taskcount = -1;
 
 let contents = ["残り時間"];
 let colors = [];
@@ -10,7 +13,7 @@ let colors = [];
 let ctx = document.getElementById('myChart').getContext('2d');
 addPiechart(ctx);
 
-let taskcount = -1;
+
 let tasks = document.getElementById("tasks");
 
 
@@ -26,13 +29,13 @@ function addPiechart(ctx){
     data: {
         labels: contents,
         datasets: [{
-            data: [60],
-            backgroundColor: [
-                "rgba(128, 128, 128, 0.2)"
-            ],
-            borderColor: [
-                "rgba(128, 128, 128, 1)"
-            ],
+            data: t,
+            backgroundColor:
+                colormap2[taskcount]
+            ,
+            borderColor:
+                colormap[taskcount]
+            ,
             borderWidth: 1
         }]
     },
@@ -51,7 +54,7 @@ function addPiechart(ctx){
 }
 
 setInterval(function(){
-    myChart.data.datasets[0].data = [60];
+    myChart.data.datasets[0].data = t;
     myChart.update();
 },1000);
 
@@ -140,7 +143,7 @@ function createTimer(){
     //ストップボタン
     let stopbutton = document.createElement("button");
     stopbutton.innerHTML = "Stop";
-    stopbutton.onclick= ()=>stopcount(countdownID);
+    stopbutton.onclick= ()=>stopcount(taskindex);
     timer.appendChild(stopbutton);
     
 
@@ -170,15 +173,18 @@ function countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskind
     let hour = 0;
 
     if(countdownID != 0){
-        stopcount(countdownID);
+        if(isactivetimer[taskindex] == 0){
+            isactivetimer[taskindex] = 1;
+        }
+        return countdownID;
     }
+
     if(hidesecond.value != "none"){
         second = parseInt(hidesecond.value);
     }
     else{
         second = 0;
     }
-    
     if(hideminute.value != "none"){
         minute = parseInt(hideminute.value);
     }
@@ -193,10 +199,10 @@ function countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskind
     }
 
 
-    
-    
-
     countdownID = setInterval(function(){
+        if(isactivetimer[taskindex] == 0){
+            return;
+        }
         t[taskindex]++;
 
         second++;
@@ -223,6 +229,6 @@ function countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskind
     },1000)
     return(countdownID);
 }
-function stopcount(countdownID){
-    clearInterval(countdownID);
+function stopcount(taskindex){
+    isactivetimer[taskindex] = 0;
 }
