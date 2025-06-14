@@ -1,4 +1,3 @@
-import {colormap} from "./colorMap.js";
 
 let myChart;
 

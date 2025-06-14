@@ -1,4 +1,4 @@
-export const colormap = [
+const colormap = [
   "rgba(255, 99, 132, 1)",   // 赤
   "rgba(54, 162, 235, 1)",   // 青
   "rgba(255, 206, 86, 1)",   // 黄色
