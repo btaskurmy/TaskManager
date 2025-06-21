@@ -1,6 +1,6 @@
 let myChart;
-
-let t = [0,0,0,0,60];
+let tasklist = [];
+let t = 60;
 let isactivetimer = [0,0,0,0,0];
 
 let taskindex = -1;
@@ -44,16 +44,31 @@ class Task{
             return;
         }
         this.seconds++;
-        if(seconds > 60){
-            minutes++;
+        if(this.seconds > 60){
+            this.minutes++;
         }
-        if(minutes > 60){
-            hours++;
+        if(this.minutes > 60){
+            this.hours++;
         }
-        timer =  `${( '00' + hours ).slice( -2 )}:${( '00' + minutes ).slice( -2 )}:${( '00' + seconds ).slice( -2 )}`;
+        this.timer =  `${( '00' + this.hours ).slice( -2 )}:${( '00' + this.minutes ).slice( -2 )}:${( '00' + this.seconds ).slice( -2 )}`;
     }
+
 }
 
+setInterval(function(){
+    for(let i = 0;i<tasklist.length;i++){
+        if(tasklist[i].active == 1){
+            tasklist[i].updateTimer();
+        }
+    }
+    let newdatas = [];
+    for(let i = 0;i<tasklist.length;i++){
+        newdatas.push(tasklist[i].hours*3600 + tasklist[i].minutes*60 + tasklist[i].seconds);
+    }
+    newdatas.push(t);
+    myChart.data.datasets[0].data = newdatas;
+    myChart.update();
+},1000);
 
 
 function addPiechart(ctx){
@@ -62,7 +77,7 @@ function addPiechart(ctx){
     data: {
         labels: contents,
         datasets: [{
-            data: t,
+            data: [t],
             backgroundColor:
                 colormap2[taskcount]
             ,
@@ -86,10 +101,7 @@ function addPiechart(ctx){
 
 }
 
-setInterval(function(){
-    myChart.data.datasets[0].data = t;
-    myChart.update();
-},1000);
+
 
 
 function addTask(){
@@ -98,6 +110,7 @@ function addTask(){
     taskcount ++;
 
     if(!textvalue){return;}
+    let newtaskobj = new Task(textvalue);
 
     let task = document.createElement("div");
     task.className = "task";
@@ -118,24 +131,24 @@ function addTask(){
     task.appendChild(deletebutton);
 
     //タイマー追加
-    let timer = createTimer();
+    let timer = createTimer(newtaskobj);
     task.appendChild(timer);
 
 
     //グラフ更新
-    contents.push(newtask.value);
-    colors.push(colormap[taskindex]);
-    myChart.data.labels.push(contents[taskindex]); // ラベルを追加
-    myChart.data.datasets[0].backgroundColor.push(colors[taskindex]); // 色を追加
-    myChart.update();
+    // contents.push(newtask.value);
+    // colors.push(colormap[taskindex]);
+    // myChart.data.labels.push(contents[taskindex]); // ラベルを追加
+    // myChart.data.datasets[0].backgroundColor.push(colors[taskindex]); // 色を追加
+    // myChart.update();
 
-
+    tasklist.push(newtaskobj);
     tasks.appendChild(task);
     taskindex++;
 }
 
 
-function createTimer(){
+function createTimer(task){
     let countdownID = 0;
     //タイマー作成
     let timer = document.createElement("div");
@@ -170,13 +183,15 @@ function createTimer(){
     //スタートボタン
     let startbutton = document.createElement("button");
     startbutton.innerHTML = "Start";
-    startbutton.onclick= ()=>{countdownID = countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskindex);}
+    //startbutton.onclick= ()=>{countdownID = countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskindex);}
+    
+    startbutton.onclick= ()=>{task.Start();}
     timer.appendChild(startbutton);
 
     //ストップボタン
     let stopbutton = document.createElement("button");
     stopbutton.innerHTML = "Stop";
-    stopbutton.onclick= ()=>stopcount(taskindex);
+    stopbutton.onclick= ()=>{task.Stop();};
     timer.appendChild(stopbutton);
     
 
