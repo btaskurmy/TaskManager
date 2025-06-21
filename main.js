@@ -31,6 +31,7 @@ class Task{
         this.minutes = 0;
         this.seconds = 0;
         this.active = 0;
+        this.timerobj;
         this.timer = "00:00:00";
     }
     Start(){
@@ -51,6 +52,11 @@ class Task{
             this.hours++;
         }
         this.timer =  `${( '00' + this.hours ).slice( -2 )}:${( '00' + this.minutes ).slice( -2 )}:${( '00' + this.seconds ).slice( -2 )}`;
+
+        if(this.timerobj){
+            console.log("kita");
+            this.timerobj.textContent = this.timer;
+        }
     }
 
 }
@@ -69,6 +75,7 @@ setInterval(function(){
     myChart.data.datasets[0].data = newdatas;
     myChart.update();
 },1000);
+
 
 
 function addPiechart(ctx){
@@ -110,11 +117,10 @@ function addTask(){
     taskcount ++;
 
     if(!textvalue){return;}
-    let newtaskobj = new Task(textvalue);
+    let newtaskobj = new Task(textvalue,);
 
     let task = document.createElement("div");
     task.className = "task";
-
 
     //タイトル作成
     let h2 = document.createElement("h2");
@@ -123,13 +129,13 @@ function addTask(){
     task.appendChild(h2);
 
 
-
     //削除ボタン
     let deletebutton = document.createElement("button");
     deletebutton.innerHTML = "Delete";
     deletebutton.onclick= ()=>deleteTask(h2,deletebutton,timer);
     task.appendChild(deletebutton);
 
+    
     //タイマー追加
     let timer = createTimer(newtaskobj);
     task.appendChild(timer);
@@ -179,6 +185,10 @@ function createTimer(task){
     count.textContent = "00:00:00";
     count.style.fontSize = 25;
     timer.appendChild(count);
+    task.timerobj = count;
+    console.log(task.timerobj);
+
+
 
     //スタートボタン
     let startbutton = document.createElement("button");
@@ -211,72 +221,7 @@ function deleteTask(h2,deletebutton,timer){
     }
 }
 
-
-
-function countdown(text,hidesecond,hideminute,hidehour,count,countdownID,taskindex){
-    
-    
-    let second = 0;
-    let minute = 0;
-    let hour = 0;
-
-    if(countdownID != 0){
-        if(isactivetimer[taskindex] == 0){
-            isactivetimer[taskindex] = 1;
-        }
-        return countdownID;
-    }
-
-    if(hidesecond.value != "none"){
-        second = parseInt(hidesecond.value);
-    }
-    else{
-        second = 0;
-    }
-    if(hideminute.value != "none"){
-        minute = parseInt(hideminute.value);
-    }
-    else{
-        minute = 0;
-    }
-    if(hidehour.value != "none"){
-        hour = parseInt(hidehour.value);
-    }
-    else{
-        hour = 0;
-    }
-
-
-    countdownID = setInterval(function(){
-        if(isactivetimer[taskindex] == 0){
-            return;
-        }
-        t[taskindex]++;
-
-        second++;
-        if(second>59){
-            second = 0;
-            minute++;
-        }
-        if(minute>59){
-            minute = 0;
-            hour++;
-        }
-        
-        count.textContent =  `${( '00' + hour ).slice( -2 )}:${( '00' + minute ).slice( -2 )}:${( '00' + second ).slice( -2 )}` 
-        
-
-        hidesecond.value = second;
-        hideminute.value = minute;
-        hidehour.value = hour;
-
-        if(t[taskindex] >= parseInt(text.value)){
-            count.style.color = "green";
-            count.style.fontWeight = 900;
-        }
-    },1000)
-    return(countdownID);
-}
-function stopcount(taskindex){
-    isactivetimer[taskindex] = 0;
-}
+// if(t[taskindex] >= parseInt(text.value)){
+//     count.style.color = "green";
+//     count.style.fontWeight = 900;
+// }
